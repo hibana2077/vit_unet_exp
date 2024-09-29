@@ -3,13 +3,13 @@ import timm
 from unet_model import VovUnet_Var
 from timm.models.eva import EvaBlock,EvaAttention
 from timm.models.vovnet import OsaBlock
-a_tensor = torch.randn(16, 16, 16)# Batch, N
+a_tensor = torch.randn(32, 32, 32)# Batch, N
 
-test_model = EvaAttention(16)
+test_model = EvaAttention(32)
 out = test_model(a_tensor)
 print(out.shape)
 
-test_model = EvaBlock(dim=16, num_heads=4)
+test_model = EvaBlock(dim=32, num_heads=4)
 out = test_model(a_tensor)
 print(out.shape)
 
