@@ -9,8 +9,6 @@ test_model = EvaAttention(16)
 out = test_model(a_tensor)
 print(out.shape)
 
-a_tensor = torch.randn(16, 16, 16)# Batch, N
-
 test_model = EvaBlock(dim=16, num_heads=4)
 out = test_model(a_tensor)
 print(out.shape)

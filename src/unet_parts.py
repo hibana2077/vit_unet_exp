@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from timm.models.vovnet import OsaBlock
+from timm.models.eva import EvaBlock
 
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
