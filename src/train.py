@@ -1,4 +1,4 @@
-from unet_model import UNet_Var, UNet, VovUnet_Var
+from unet_model import UNet_Var, VovUnet_Var, MobileVitV2Unet_Var
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -43,7 +43,8 @@ for i, (img, label) in enumerate(train_loader):
 
 # define model
 # model = UNet_Var(1, 1, 11)
-model = VovUnet_Var(1, 1, 11)
+# model = VovUnet_Var(1, 1, 11)
+model = MobileVitV2Unet_Var(1, 1, 11)
 model = model.to(device)
 
 # define loss function
