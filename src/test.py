@@ -18,8 +18,8 @@ from timm.models.vovnet import OsaBlock
 
 a_tensor = torch.randn(16, 1, 256, 256)# Batch, N, H, W
 
-test_model = VovUnet_Var(1, 1, 11)
-# test_model = MobileVitV2Unet_Var(1, 1, 11)
+# test_model = VovUnet_Var(1, 1, 11)
+test_model = MobileVitV2Unet_Var(1, 1, 11)
 out = test_model(a_tensor)
 print(out[0].shape)
 print(out[1].shape)
