@@ -73,30 +73,30 @@ class VovUnet_Var(nn.Module):
         x = self.up4(x, x1)
         logits = self.outc(x)
         return logits, cls_out
-    
-class EvaUnet_Var(nn.Module):
+
+class MobileVitV2Unet_Var(nn.Module):
     def __init__(self, n_channels, n_classes_seg, n_classes_cls, bilinear=False):
-        super(EvaUnet_Var, self).__init__()
+        super(MobileVitV2Unet_Var, self).__init__()
         self.n_channels = n_channels
         self.n_classes_seg = n_classes_seg
         self.n_classes_cls = n_classes_cls
         self.bilinear = bilinear
 
-        self.inc = (DoubleEva(n_channels, 64))
-        self.down1 = (DownEva(64, 128))
-        self.down2 = (DownEva(128, 256))
-        self.down3 = (DownEva(256, 512))
+        self.inc = (DoubleConv(n_channels, 64))
+        self.down1 = (DownMobileVit(64, 128))
+        self.down2 = (DownMobileVit(128, 256))
+        self.down3 = (DownMobileVit(256, 512))
         factor = 2 if bilinear else 1
-        self.down4 = (DownEva(512, 1024 // factor))
+        self.down4 = (DownMobileVit(512, 1024 // factor))
         self.cls = nn.Sequential(
             nn.AdaptiveAvgPool2d((1, 1)),
             nn.Flatten(),
             nn.Linear(1024, n_classes_cls)
         )
-        self.up1 = (UpEva(1024, 512 // factor, bilinear))
-        self.up2 = (UpEva(512, 256 // factor, bilinear))
-        self.up3 = (UpEva(256, 128 // factor, bilinear))
-        self.up4 = (UpEva(128, 64, bilinear))
+        self.up1 = (UpMobileVit(1024, 512 // factor, bilinear))
+        self.up2 = (UpMobileVit(512, 256 // factor, bilinear))
+        self.up3 = (UpMobileVit(256, 128 // factor, bilinear))
+        self.up4 = (UpMobileVit(128, 64, bilinear))
         self.outc = (OutConv(64, n_classes_seg))
 
     def forward(self, x):

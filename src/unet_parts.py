@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from timm.models.vovnet import OsaBlock
-from timm.models.eva import EvaBlock
+from timm.models.mobilevit import MobileVitV2Block
 
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
@@ -38,20 +38,20 @@ class DoubleOsa(nn.Module):
 
     def forward(self, x):
         return self.double_osa(x)
-    
-class DoubleEva(nn.Module):
+
+class DoubleMobileVit(nn.Module):
     def __init__(self, in_channels, out_channels, mid_channels=None):
         super().__init__()
         if not mid_channels:
             mid_channels = out_channels
-        self.double_eva = nn.Sequential(
-            EvaBlock(dim=in_channels, num_heads=4),
+        self.double_mobilevit = nn.Sequential(
+            MobileVitV2Block(in_chs=in_channels, out_chs=out_channels),
             nn.BatchNorm2d(out_channels),
             nn.GELU(),
         )
 
     def forward(self, x):
-        return self.double_eva(x)
+        return self.double_mobilevit(x)
 
 class Down(nn.Module):
     """Downscaling with maxpool then double conv"""
@@ -77,16 +77,16 @@ class DownOsa(nn.Module):
     def forward(self, x):
         return self.maxpool_osa(x)
 
-class DownEva(nn.Module):
+class DownMobileVit(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.maxpool_eva = nn.Sequential(
+        self.maxpool_mobilevit = nn.Sequential(
             nn.MaxPool2d(2),
-            DoubleEva(in_channels, out_channels)
+            DoubleMobileVit(in_channels, out_channels)
         )
 
     def forward(self, x):
-        return self.maxpool_eva(x)
+        return self.maxpool_mobilevit(x)
 
 class Up(nn.Module):
     """Upscaling then double conv"""
@@ -139,17 +139,17 @@ class UpOsa(nn.Module):
         x = torch.cat([x2, x1], dim=1)
         return self.osa(x)
 
-class UpEva(nn.Module):
+class UpMobileVit(nn.Module):
     def __init__(self, in_channels, out_channels, bilinear=True):
         super().__init__()
 
         # if bilinear, use the normal convolutions to reduce the number of channels
         if bilinear:
             self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
-            self.eva = DoubleEva(in_channels, out_channels, in_channels // 2)
+            self.mobilevit = DoubleMobileVit(in_channels, out_channels, in_channels // 2)
         else:
             self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)
-            self.eva = DoubleEva(in_channels, out_channels)
+            self.mobilevit = DoubleMobileVit(in_channels, out_channels)
 
     def forward(self, x1, x2):
         x1 = self.up(x1)
@@ -160,7 +160,7 @@ class UpEva(nn.Module):
         x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2,
                         diffY // 2, diffY - diffY // 2])
         x = torch.cat([x2, x1], dim=1)
-        return self.eva(x)
+        return self.mobilevit(x)
 
 class OutConv(nn.Module):
     def __init__(self, in_channels, out_channels):
