@@ -45,7 +45,7 @@ for i, (img, label) in enumerate(train_loader):
     break
 
 # define model
-model = convnextv2_atto(num_classes=8, in_chans=3)
+model = convnextv2_base(num_classes=8, in_chans=3)
 model = model.to(device)
 
 # define loss function
