@@ -7,13 +7,12 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset, random_split
-from medmnist.dataset import OrganAMNIST,OrganCMNIST
+from medmnist.dataset import OrganAMNIST,BloodMNIST
 import os
 import json
 from timm.models.resnet import resnet18,resnet50
 from timm.models.convnext import convnextv2_atto, convnextv2_base
 from timm.models.eva import eva02_small_patch14_224, eva02_base_patch14_224
-from timm.models.densenet import densenet121, densenet201
 
 # define transforms
 transform = transforms.Compose([
@@ -29,8 +28,8 @@ if not os.path.exists('./data'):
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # define dataset
-train_dataset = OrganCMNIST(root='./data', split='train', transform=transform, download=True, size=224)
-test_dataset = OrganCMNIST(root='./data', split='test', transform=transform, download=True, size=224)
+train_dataset = BloodMNIST(root='./data', split='train', transform=transform, download=True, size=224)
+test_dataset = BloodMNIST(root='./data', split='test', transform=transform, download=True, size=224)
 
 # define dataloader
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=4)
@@ -45,7 +44,7 @@ for i, (img, label) in enumerate(train_loader):
     break
 
 # define model
-model = eva02_base_patch14_224(num_classes=11, in_chans=1)
+model = eva02_small_patch14_224(num_classes=11, in_chans=3)
 model = model.to(device)
 
 # define loss function
