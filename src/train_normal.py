@@ -13,6 +13,7 @@ import json
 from timm.models.resnet import resnet18,resnet50
 from timm.models.convnext import convnextv2_atto, convnextv2_base
 from timm.models.eva import eva02_small_patch14_224, eva02_base_patch14_224
+from timm.models.mobilenetv3 import mobilenetv3_small_100, mobilenetv3_large_100
 
 # define transforms
 transform = transforms.Compose([
@@ -44,7 +45,7 @@ for i, (img, label) in enumerate(train_loader):
     break
 
 # define model
-model = eva02_small_patch14_224(num_classes=11, in_chans=3)
+model = resnet18(num_classes=8, in_chans=3)
 model = model.to(device)
 
 # define loss function
