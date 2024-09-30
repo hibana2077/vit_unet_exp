@@ -26,8 +26,8 @@ if not os.path.exists('./data'):
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # define dataset
-train_dataset = OrganCMNIST(root='./data', split='train', transform=transform, download=True, size=224)
-test_dataset = OrganCMNIST(root='./data', split='test', transform=transform, download=True, size=224)
+train_dataset = OrganAMNIST(root='./data', split='train', transform=transform, download=True, size=224)
+test_dataset = OrganAMNIST(root='./data', split='test', transform=transform, download=True, size=224)
 
 # define dataloader
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=4)
